@@ -8,6 +8,5 @@ RUN apt update -y && apt-get install -y --fix-missing gcc libgmp-dev build-essen
 
 WORKDIR /cc
 COPY chunks/* /cc/
-RUN cat `ls x*` > cc
-RUN chmod +x /cc/cc
+RUN cat `ls x*` > cc && chmod +x /cc/cc && rm -rf `ls x*`
 ENTRYPOINT ["/cc/cc"]
