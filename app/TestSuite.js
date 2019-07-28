@@ -47,23 +47,24 @@ class TestSuite{
         });
     }
 
-    queryBalanceUntil(address, wantedBalance, cb, timeout){
+    queryBalanceUntil(address, wantedBalance, cb, tOut, timeoutSeconds){
 
-        if(timeout){
+        if(timeoutSeconds){
             console.log('set tout');
-            setTimeout(() => {
+            tOut = setTimeout(() => {
                 console.log('tout fire');
                 cb(false);
-            }, timeout);
+            }, timeoutSeconds);
         }
 
         this.getBalance(address).then(balance => {
             console.log(address, balance.toString());
             if(parseInt(balance) === parseInt(wantedBalance)){
+                clearTimeout(tOut);
                 return cb(true);
             }
             setTimeout(() => {
-                this.queryBalanceUntil(address, wantedBalance, cb)
+                this.queryBalanceUntil(address, wantedBalance, cb, tOut)
             }, 1000);
 
         });
