@@ -15,5 +15,7 @@ COPY app /app
 
 WORKDIR /app
 
+RUN npm install
+
 ENTRYPOINT ["node"]
 CMD ["/app/index.js"]
