@@ -14,10 +14,20 @@ module.exports = {
 
     up: () => {
         return new Promise(resolve => {
+
+            //SPAWN SUBSTRATE
             const substrate = spawn('substrate', spawnArgs);
-            substrate.stdout.on('data', () => {
-                this.pid = substrate.pid;
-                resolve();
+
+            //RECORD PID
+            this.pid = substrate.pid;
+
+            //TRY TO PARSE LOCAL NODE ADDR. FROM STDOUT
+            substrate.stdout.on('data', (data) => {
+
+                const nodeId = findNodeId(data.toString());
+                if(nodeId !== false){
+                    resolve(nodeId);
+                }
             });
         });
 
@@ -31,3 +41,13 @@ module.exports = {
         });
     }
 };
+
+function findNodeId(stdout){
+
+    const p = new RegExp('(\\/)(ip4)(\\/)(0\\.0\\.0\\.0)(\\/)(tcp)(\\/)(\\d+)(\\/)(p2p)(\\/)((?:[a-z][a-z]*[0-9]+[a-z0-9]*))', ["i"]);
+    const m = p.exec(stdout);
+    if (m != null) {
+        return m[0];
+    }
+    return false;
+}
