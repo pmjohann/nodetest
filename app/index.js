@@ -8,7 +8,7 @@ const localKey = test.getKeypair(os.hostname());
 const { spawn } = require('child_process');
 const path = require('path');
 const Redis = require('ioredis');
-const redis = new Redis(6379, process.env.MASTER_IP || '127.0.0.1');
+const redis = new Redis();
 
 process.on('SIGINT', () => {
     console.log('shutting down SUBSTRATE...');
