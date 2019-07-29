@@ -48,7 +48,7 @@ test.init().then(instance => {
     } else {
         console.log(`Speedtest WORKER up. PID: ${process.pid}`);
 
-        run(instance, localKey, 5000, (lastNonce) => {
+        run(instance, localKey, 500, (lastNonce) => {
             process.send({ cmd: 'finished', nonce: lastNonce });
         });
     }
@@ -58,7 +58,7 @@ function run(instance, localKey, amount, cb, i, millisec) {
     i = i ? i : 0;
     millisec = millisec ? millisec : 20;
     redis.get(`${localKey.address}.balance`).then(balance => {
-        if (balance - amount > 1000) {
+        if (balance - amount > 5000) {
             redis.set(`${localKey.address}.balance`, balance - amount);
 
             redis.incr(`${localKey.address}.nonce`).then(nonce => {
