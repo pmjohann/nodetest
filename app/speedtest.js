@@ -20,7 +20,7 @@ test.init().then(instance => {
             redis.set(`${localKey.address}.nonce`, 0);
 
             //FORK TX WORKERS
-            for (let i = 0; i < numCPUs / 2; i++) {
+            for (let i = 0; i < numCPUs; i++) {
                 cluster.fork();
             }
 
