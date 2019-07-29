@@ -69,7 +69,7 @@ function run(instance, localKey, amount, cb, i, millisec) {
                 setTimeout(() => {
 
                     run(instance, localKey, amount, cb, i + 1, millisec);
-                }, i * millisec);
+                }, i + millisec);
             });
             return;
         }
