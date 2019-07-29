@@ -1,7 +1,7 @@
 const cluster = require('cluster');
 const numCPUs = require('os').cpus().length;
 const Redis = require('ioredis');
-const redis = new Redis(6379, process.env.MASTER_IP || '127.0.0.1');
+const redis = new Redis();
 const TestSuite = require('./TestSuite');
 const test = new TestSuite();
 const os = require('os');
