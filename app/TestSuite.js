@@ -1,6 +1,7 @@
-const { ApiPromise } = require('@polkadot/api');
+const { ApiPromise, WsProvider } = require('@polkadot/api');
 const keyring = require('@polkadot/keyring/testing');
 const crypto = require('crypto');
+//const provider = new WsProvider('ws://127.0.0.1:9944');
 
 const ALICE = '5GrwvaEF5zXb26Fz9rcQpDWS57CtERHpNehXCPcNoHGKutQY';
 const BOB = '5FHneW46xGXgs5mUiveU4sbTyGBzmstUspZC92UhjJM694ty';

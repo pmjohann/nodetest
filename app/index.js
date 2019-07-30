@@ -7,6 +7,7 @@ const os = require('os');
 const localKey = test.getKeypair(os.hostname());
 const { spawn } = require('child_process');
 const path = require('path');
+const speedtest = require('./speedtest');
 
 process.on('SIGINT', () => {
     console.log('shutting down SUBSTRATE...');
@@ -66,6 +67,15 @@ nc.on('connect', function() {
                 nc.subscribe('speedtest.start', function() {
                     console.log('szpidteszt on!');
 
+                    speedtest(instance, localKey).then(() => {
+
+                        nc.publish('speedtest.finished', {
+                            address: localKey.address,
+                            totalNodes: process.env.TOTAL_NODES || 1
+                        });
+                    });
+
+                    /*
                     const clustered = spawn('node', [ __dirname + path.sep + 'speedtest.js' ]);
 
                     clustered.stdout.on('data', (data) => {
@@ -77,6 +87,8 @@ nc.on('connect', function() {
                                 address: localKey.address,
                                 totalNodes: process.env.TOTAL_NODES || 1
                             });
+                        }else{
+                            console.log(out);
                         }
                     });
 
@@ -87,7 +99,7 @@ nc.on('connect', function() {
                     clustered.on('close', (code) => {
                         console.log(`child process exited with code ${code}`);
                     });
-
+                    */
 
                 });
             });

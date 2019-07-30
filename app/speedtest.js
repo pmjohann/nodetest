@@ -1,29 +1,50 @@
-const TestSuite = require('./TestSuite');
-const test = new TestSuite();
-const os = require('os');
-const localKey = test.getKeypair(os.hostname());
+module.exports = function(instance, localKey){
+    return new Promise(resolve => {
 
-/////////////////////
+        const totalTx = 100
+        const amount = 500;
+        let nonce = 0;
+        let delay = 0;
+        let processed = 0;
 
-const { ApiPromise, WsProvider } = require('@polkadot/api');
-const BN = require('bn.js');
+        const timeOut = setTimeout(() => {
+            resolve();
+        }, 60 * 1000);
 
-///////////
-
-const provider = new WsProvider('ws://127.0.0.1:9944');
-
+        for (let i = 0; i < totalTx; i++) {
+            setTimeout(() => {
+                nonce++;
+                console.log('TX START :: ', nonce - 1, (new Date()).getTime());
+                instance.transferRaw(localKey.address, instance.accounts[0], amount, nonce - 1).then(hash => {
+                    processed++;
+                    console.log('TX DONE :: ', nonce - 1, (new Date()).getTime(), hash, `${processed} / ${totalTx}`);
+                    if(processed === totalTx){
+                        clearTimeout(timeOut);
+                        resolve();
+                    }
+                });
+            }, delay);
+            delay += 200;
+        }
+    });
+}
+/*
 
 ApiPromise.create(provider).then(api => {
-
+    let delay = 0;
     api.query.system.accountNonce(localKey.address).then(rawNonce => {
-
-        let nonce = new BN(rawNonce.toString());
+        console.log(rawNonce);
+        let nonce = parseInt(rawNonce.toString());
         for (let i = 0; i < 100; i++) {
             const transfer = api.tx.balances.transfer(test.accounts[0], 500);
-            transfer.signAndSend(localKey, {
-                nonce
-            });
-            nonce = nonce.add(new BN(1));
+            console.log('NONCE :: ', nonce);
+            setTimeout(() => {
+                transfer.signAndSend(localKey, {
+                    nonce
+                });
+            }, delay);
+            nonce++;
+            delay += 200;
         }
         process.stdout.write('FINISHED');
         setTimeout(() => {
@@ -32,3 +53,5 @@ ApiPromise.create(provider).then(api => {
     });
 
 });
+
+*/
