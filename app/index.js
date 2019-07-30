@@ -7,8 +7,6 @@ const os = require('os');
 const localKey = test.getKeypair(os.hostname());
 const { spawn } = require('child_process');
 const path = require('path');
-const Redis = require('ioredis');
-const redis = new Redis();
 
 process.on('SIGINT', () => {
     console.log('shutting down SUBSTRATE...');
@@ -71,7 +69,15 @@ nc.on('connect', function() {
                     const clustered = spawn('node', [ __dirname + path.sep + 'speedtest.js' ]);
 
                     clustered.stdout.on('data', (data) => {
-                        console.log(`${data}`.trim());
+                        const out = data.toString().trim();
+                        if(out.includes('FINISHED')){
+
+                            //PUBLISH IN NATS THAT THIS NODE HAS DONE TESTING
+                            nc.publish('speedtest.finished', {
+                                address: localKey.address,
+                                totalNodes: process.env.TOTAL_NODES || 1
+                            });
+                        }
                     });
 
                     clustered.stderr.on('data', (data) => {
@@ -82,21 +88,7 @@ nc.on('connect', function() {
                         console.log(`child process exited with code ${code}`);
                     });
 
-                    //SUBSCRIBE IN REDIS FOR THE TX CLUSTER FINISH
-                    redis.subscribe('cluster.done', function() {
 
-                        //UPON RECEIVING THIS EVENT
-                        redis.on("message", function(channel, message) {
-                            if(channel === 'cluster.done'){
-
-                                //PUBLISH IN NATS THAT THIS NODE HAS DONE TESTING
-                                nc.publish('speedtest.finished', {
-                                    address: localKey.address,
-                                    totalNodes: process.env.TOTAL_NODES || 1
-                                });
-                            }
-                        });
-                    });
                 });
             });
         });
