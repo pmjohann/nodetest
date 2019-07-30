@@ -15,7 +15,7 @@ const provider = new WsProvider('ws://127.0.0.1:9944');
 
 ApiPromise.create(provider).then(api => {
 
-    api.query.system.accountNonce(localKey.address()).then(rawNonce1 => {
+    api.query.system.accountNonce(localKey.address).then(rawNonce1 => {
 
         let nonce1 = new BN(rawNonce1.toString());
         for (let i = 0; i < 100; i++) {
