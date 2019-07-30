@@ -12,6 +12,7 @@
   "dependencies": {
     "@polkadot/api": "^0.81.1",
     "@polkadot/keyring": "^0.94.1",
+    "bn.js": "^5.0.0",
     "ioredis": "^4.11.2",
     "nats": "^1.3.0"
   }
