@@ -24,7 +24,7 @@ module.exports = function(instance, localKey){
                     }
                 });
             }, delay);
-            delay += 25;
+            delay += 50;
         }
     });
 }
